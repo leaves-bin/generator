@@ -1,0 +1,121 @@
+<#include "/macro.include"/>
+<#assign className = table.className>   
+<#assign classNameFirstLower = table.classNameFirstLower>   
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+
+<#macro mapperEl value>${r"#{"}${value}}</#macro>
+<#macro namespace>${className}.</#macro>
+
+<mapper namespace="${table.sqlName}Dao">
+	<resultMap id="BaseResultMap" type="${table.sqlName}">
+        <#list table.columns as column>
+        	<result property="${column.columnNameLower}" column="${column.sqlName}"/>
+		</#list>
+	</resultMap>
+	
+	<!-- 用于select查询公用抽取的列 -->
+	<sql id="Base_Column_List">
+		<#list table.columns as column>${column.sqlName}<#if column_has_next>,</#if></#list>
+	</sql>
+	
+	<sql id="Base_Condition">
+		<trim prefix="WHERE" prefixOverrides="AND | OR">
+			<#list table.notPkColumns as column>
+				<if test="${column.columnNameLower}  != null and ${column.columnNameLower}  != ''" > AND 	${column.sqlName} = <@mapperEl column.columnNameLower/> </if>
+	     	 </#list>
+	     	  <if test="sqlWhere  != null and sqlWhere  != ''" > ${r'${sqlWhere}'} </if>
+		</trim>
+	</sql>
+
+	<!-- 插入语句-->
+	<insert id="insert" parameterType="${table.sqlName}">
+		<#list table.columns as column>
+    		<#if column.unique && column.pk>
+				<selectKey resultType="Long" keyProperty="${column.sqlName}" order="AFTER" >
+			      SELECT LAST_INSERT_ID()
+			    </selectKey>
+		   </#if>
+		</#list>
+        INSERT INTO ${table.sqlName} 
+         <trim prefix="(" suffix=")" suffixOverrides="," >
+	        <#list table.columns as column>
+	        	<if test="${column.columnNameLower} != null and ${column.columnNameLower}  != ''" >  ${column.sqlName}<#if column_has_next>,</#if> </if> 
+	       	</#list>
+       	 </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+	        <#list table.columns as column> 
+	        	<if test="${column.columnNameLower} != null and ${column.columnNameLower}  != ''" >  <@mapperEl column.columnNameLower/><#if column_has_next>,</#if> </if> 
+	       </#list>        
+   	 </trim>
+	</insert>
+    
+   <!--更新语句-->
+	<update id="update" parameterType="${table.sqlName}">
+        UPDATE ${table.sqlName} 
+        <set >
+        	<#list table.notPkColumns as column>
+	        	<if test="${ column.columnNameLower}  != null and ${column.columnNameLower}  != ''" > ${column.sqlName} = <@mapperEl column.columnNameLower/> <#if column_has_next>,</#if> </if>
+	     	 </#list>
+	    </set>
+        WHERE 
+        <#list table.columns as column>
+    		<#if column.unique && column.pk> ${column.sqlName} = <@mapperEl column.columnNameLower/>   </#if>
+		</#list>
+	</update>
+
+	<!--删除语句-->
+	<#list table.columns as column>
+	    <#if column.unique && column.pk>
+		    <delete id="delete" parameterType="${column.javaType}">
+		        DELETE FROM ${table.sqlName} WHERE ${column.sqlName} = <@mapperEl column.columnNameLower/> 
+		    </delete>
+	    </#if>
+	</#list>
+    
+    <!--查询语句-->
+    <select id="getById" resultMap="BaseResultMap">
+		SELECT  <include refid="Base_Column_List" /> FROM ${table.sqlName} 
+	    WHERE 
+		<#list table.columns as column>
+			<#if column.unique && column.pk> ${column.sqlName} = <@mapperEl column.columnNameLower/>  </#if>
+		</#list>
+	</select>
+	
+		<!--列表查询-->
+		<select id="getListByQuery" resultType="${table.sqlName}" resultMap="BaseResultMap" parameterType="${table.sqlName}Query">
+		SELECT <include refid="Base_Column_List" /> FROM ${table.sqlName} 
+		  <include refid="Base_Condition" />
+		<choose>
+			<when test="sortBy != null and sortBy != ''">
+				<if test="sortType == 1"> ORDER BY  ${r'${sortBy}'}  ASC </if>
+				<if test="sortType == 2"> ORDER BY  ${r'${sortBy}'}  DESC </if>
+			</when>
+			<otherwise> ORDER BY id ASC </otherwise>
+		</choose>
+	</select>
+	
+	<!--分页查询-->
+	<select id="getInfoByQuery" resultType="${table.sqlName}" resultMap="BaseResultMap" parameterType="${table.sqlName}Query">
+		SELECT <include refid="Base_Column_List" /> FROM ${table.sqlName} 
+		 <include refid="Base_Condition" />
+		<choose>
+			<when test="sortBy != null and sortBy != ''">
+				<if test="sortType == 1"> ORDER BY  ${r'${sortBy}'}  ASC </if>
+				<if test="sortType == 2"> ORDER BY  ${r'${sortBy}'}  DESC </if>
+			</when>
+			<otherwise> ORDER BY id ASC </otherwise>
+		</choose>
+		<if test="startNum != null and startNum >= 0 and pageSize != null and pageSize > 0">
+			limit ${r'#{startNum}'}, ${r'#{pageSize}'}
+		</if>
+	</select>
+	
+	<!--查询数量-->
+    <select id="getCountByQuery" resultType="Integer" parameterType="${table.sqlName}Query">
+        SELECT count(*) FROM ${table.sqlName} 
+         <include refid="Base_Condition" />
+    </select>
+    
+</mapper>
+
