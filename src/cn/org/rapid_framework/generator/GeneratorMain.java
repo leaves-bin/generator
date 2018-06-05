@@ -14,10 +14,10 @@ public class GeneratorMain {
 		GeneratorFacade g = new GeneratorFacade();
 		//g.printAllTableNames();				//打印数据库中的表名称
 		//List<Table> tableList=g.getAllTableNames();
-		g.getGenerator().setTemplateRootDir("D:\\eclipse-workspace\\generator\\template");
+		g.getGenerator().setTemplateRootDir("E:\\workspace\\generator\\template");
 		g.deleteOutRootDir();  
 		
-		String str="connect_book";
+		String str="brand_pro_analyse";
 		
 		String[] tables=str.split(",");
 		for (String string : tables) {

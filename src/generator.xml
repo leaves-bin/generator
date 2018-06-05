@@ -68,7 +68,7 @@
 	
 	<!-- Mysql  -->
 	<!-- -->
-	<entry key="jdbc_url">jdbc:mysql://localhost:3306/zhmf?useUnicode=true</entry>
+	<entry key="jdbc_url">jdbc:mysql://localhost:3306/brand?useUnicode=true</entry>
 	<entry key="jdbc_driver">com.mysql.jdbc.Driver</entry>
 	
 	
