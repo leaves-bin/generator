@@ -27,6 +27,16 @@
      	  	<if test="sqlWhere  != null and sqlWhere  != ''">${r'${sqlWhere}'}</if>
 		</trim>
 	</sql>
+	
+	<sql id="Base_OrderBy">
+		<choose>
+			<when test="sortBy != null and sortBy != ''">
+				<if test="sortType == 1">ORDER BY ${r'${sortBy}'} ASC</if>
+				<if test="sortType == 2">ORDER BY ${r'${sortBy}'} DESC</if>
+			</when>
+			<otherwise>ORDER BY id ASC</otherwise>
+		</choose>
+	</sql>
 
 	<!-- 插入语句-->
 	<insert id="insert" parameterType="${table.sqlName}">
@@ -48,7 +58,7 @@
    	 	</trim>
 	</insert>
     
-   <!--更新语句-->
+   	<!--更新语句-->
 	<update id="update" parameterType="${table.sqlName}">
         UPDATE ${table.sqlName} 
         <set >
@@ -84,26 +94,14 @@
 	<select id="getListByQuery" resultType="${table.sqlName}" resultMap="BaseResultMap" parameterType="${table.sqlName}Query">
 		SELECT <include refid="Base_Column_List" /> FROM ${table.sqlName} 
 	  	<include refid="Base_Condition" />
-		<choose>
-			<when test="sortBy != null and sortBy != ''">
-				<if test="sortType == 1">ORDER BY ${r'${sortBy}'} ASC</if>
-				<if test="sortType == 2">ORDER BY ${r'${sortBy}'} DESC</if>
-			</when>
-			<otherwise>ORDER BY id ASC</otherwise>
-		</choose>
+		<include refid="Base_OrderBy" />
 	</select>
 	
 	<!--分页查询-->
 	<select id="getInfoByQuery" resultType="${table.sqlName}" resultMap="BaseResultMap" parameterType="${table.sqlName}Query">
 		SELECT <include refid="Base_Column_List" /> FROM ${table.sqlName} 
 	 	<include refid="Base_Condition" />
-		<choose>
-			<when test="sortBy != null and sortBy != ''">
-				<if test="sortType == 1"> ORDER BY ${r'${sortBy}'} ASC</if>
-				<if test="sortType == 2"> ORDER BY ${r'${sortBy}'} DESC</if>
-			</when>
-			<otherwise>ORDER BY id ASC</otherwise>
-		</choose>
+		<include refid="Base_OrderBy" />
 		<if test="startNum != null and startNum >= 0 and pageSize != null and pageSize > 0">
 			limit ${r'#{startNum}'}, ${r'#{pageSize}'}
 		</if>

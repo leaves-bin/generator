@@ -22,10 +22,10 @@
 	<entry key="java_typemapping.java.sql.Timestamp">String</entry>
 	<entry key="java_typemapping.java.sql.Date">java.util.Date</entry>
 	<entry key="java_typemapping.java.sql.Time">java.util.Date</entry>	
-	<entry key="java_typemapping.java.lang.Byte">Integer</entry>
-	<entry key="java_typemapping.java.lang.Short">Integer</entry>
-	<entry key="java_typemapping.java.lang.Integer">Integer</entry>
-	<entry key="java_typemapping.java.lang.Long">Integer</entry>
+	<entry key="java_typemapping.java.lang.Byte">Long</entry>
+	<entry key="java_typemapping.java.lang.Short">Long</entry>
+	<entry key="java_typemapping.java.lang.Integer">Long</entry>
+	<entry key="java_typemapping.java.lang.Long">Long</entry>
 	<entry key="java_typemapping.java.math.BigDecimal">Double</entry>
 	<entry key="java_typemapping.java.sql.Clob">String</entry>
 
@@ -49,7 +49,7 @@
 	<entry key="jdbc_password">root</entry>
 		
 	<!-- oracle需要指定jdbc_schema,并且可能要大写，其它数据库忽略此项配置  -->
-	<entry key="jdbc_schema">ICAMA</entry>
+	<entry key="jdbc_schema"></entry>
 	<entry key="jdbc_catalog"></entry>
 	
 	<!-- 切换不同的数据库驱动，可以影响如分页语句的生成. 因为生成器会根据jdbc_driver自动生成一个databaseType=mysql,oracle,postgresql变量 -->
@@ -68,7 +68,7 @@
 	
 	<!-- Mysql  -->
 	<!-- -->
-	<entry key="jdbc_url">jdbc:mysql://localhost:3306/brand?useUnicode=true</entry>
+	<entry key="jdbc_url">jdbc:mysql://localhost:3306/fire?useUnicode=true</entry>
 	<entry key="jdbc_driver">com.mysql.jdbc.Driver</entry>
 	
 	
