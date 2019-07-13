@@ -1,5 +1,5 @@
 /*
- * Powered By 张永斌
- * Since 2015 <#if now??>- ${now?string('yyyy-mm-dd')}</#if>
+ * Powered By yongbin
+ * Since <#if now??>- ${now?string('yyyy-mm-dd')}</#if>
  */
 
